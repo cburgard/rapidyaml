@@ -2,6 +2,7 @@
 #define _C4_YML_NODE_HPP_
 
 #include <cstddef>
+#include <vector>
 
 #include "c4/yml/tree.hpp"
 
@@ -768,6 +769,21 @@ inline bool read(NodeRef const& n, T *v)
     return from_chars(n.val(), v);
 }
 
+//-----------------------------------------------------------------------------
+template<class T> void read(NodeRef const& n, std::vector<T> *v){
+  for(size_t i=0; i<n.num_children(); ++i){
+    T e;
+    n[i]>>e;
+    v->push_back(e);
+  }
+}
+
+template<class T> void write(NodeRef *n, std::vector<T> const& v){
+  *n |= c4::yml::SEQ;
+  for(auto e:v){
+    n->append_child() << e;
+  }
+}
 
 //-----------------------------------------------------------------------------
 template<class Visitor>
